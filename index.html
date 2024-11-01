@@ -7,6 +7,32 @@
     <title>날하하</title>
     <link rel=stylesheet href=styles.css>
     <script>
+        let users = {}; // 사용자를 저장할 객체
+
+function registerUser() {
+    const nickname = document.getElementById('nickname').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // 사용자 정보를 users 객체에 저장
+    users[email] = { nickname: nickname, password: password };
+    alert("회원가입이 완료되었습니다!");
+    closeSignup(); // 회원가입 모달 닫기
+}
+
+function loginUser() {
+    const loginEmail = document.getElementById('login-email').value;
+    const loginPassword = document.getElementById('login-password').value;
+
+    // 사용자가 등록되어 있는지 확인
+    if (users[loginEmail] && users[loginEmail].password === loginPassword) {
+        alert("로그인 성공! 반갑습니다, " + users[loginEmail].nickname + "님!");
+        closeLogin(); // 로그인 모달 닫기
+        // 여기서 추가적인 로그인 후 행동을 추가할 수 있습니다.
+    } else {
+        alert("로그인 실패: 이메일이나 비밀번호가 잘못되었습니다.");
+    }
+}
         function redirectToSignup() {
             document.getElementById('signup-modal').style.display = 'block';
         }
@@ -265,59 +291,61 @@
         </section>
         <section id="wingswiki" class="content-divider" style="width: 48%;">
             <h2 style="color: black;">・날개위키의 최신 글</h2>
-            <!-- 날개위키의 최신 글 목록 -->
+            <!-- 최신 글 목록 -->
         </section>
     </main>
 
-    <!-- 회원가입 팝업 -->
+  <footer style="display: flex; justify-content: center; align-items: center; padding: 10px;">
+    <div class="footer-center" style="text-align: center; display: flex; align-items: center;">
+        <p style="margin: 0;">&copy; 2024 날하하</p>
+        <button class="button-close" style="background-color: transparent; border: none; color: #561689; margin-left: 10px; cursor: pointer;" onclick="redirectToTerms()">이용약관</button>
+    </div>
+</footer>
+
     <div id="signup-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 style="margin: 0;">회원가입</h2>
-            </div>
-            <form onsubmit="return false;"> <!-- 기본 제출 방지 -->
-                <label for="nickname">닉네임</label><br>
-                <input type="text" id="nickname" name="nickname" required onblur="checkDuplicate('nickname')"><br>
-                <span id="nickname-duplicate"></span><br>
-
-                <label for="email">이메일</label><br>
-                <input type="email" id="email" name="email" required onblur="checkDuplicate('email')"><br>
-                <span id="email-duplicate"></span><br>
-
-                <label for="password">비밀번호</label><br>
-                <input type="password" id="password" name="password" required><br>
-
-                <label for="confirm-password">비밀번호 확인</label><br>
-                <input type="password" id="confirm-password" name="confirm-password" required oninput="checkPasswordMatch()"><br>
-                <span id="password-message"></span><br><br>
-
-                <button type="button" class="button-close" onclick="closeSignup()">닫기</button>
-                <button type="submit" class="button-signup">회원가입</button>
-            </form>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>회원가입</h2>
+        </div>
+        <label for="nickname">닉네임 </label>
+        <input type="text" id="nickname" onblur="checkDuplicate('nickname')">
+        <span id="nickname-duplicate"></span>
+        <br>
+        <label for="email">이메일 </label>
+        <input type="email" id="email" onblur="checkDuplicate('email')">
+        <span id="email-duplicate"></span>
+        <br>
+        <label for="password">비밀번호 </label>
+        <input type="password" id="password" onkeyup="checkPasswordMatch()">
+        <br>
+        <label for="confirm-password">비밀번호 확인 </label>
+        <input type="password" id="confirm-password" onkeyup="checkPasswordMatch()">
+        <span id="password-message"></span>
+        <br>
+        <div style="display: flex; align-items: center; margin-top: 10px;">
+            <button class="button-close" onclick="closeSignup()" style="margin-right: 10px;">닫기</button>
+            <button class="button-signup" onclick="registerUser()">가입하기</button>
         </div>
     </div>
+</div>
 
-    <!-- 로그인 팝업 -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 style="margin: 0;">로그인</h2>
-            </div>
-            <form>
-                <label for="login-email">이메일</label><br>
-                <input type="email" id="login-email" name="login-email" required><br>
-                <label for="login-password">비밀번호</label><br>
-                <input type="password" id="login-password" name="login-password" required><br><br>
-                <button type="button" class="button-close" onclick="closeLogin()">닫기</button>
-                <button type="submit" class="button-login">로그인</button>
-            </form>
+<div id="login-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>로그인</h2>
+        </div>
+        <label for="login-email">이메일 </label>
+        <input type="email" id="login-email">
+        <br>
+        <label for="login-password">비밀번호 </label>
+        <input type="password" id="login-password">
+        <br>
+        <div style="display: flex; align-items: center; margin-top: 10px;">
+            <button class="button-close" onclick="closeLogin()" style="margin-right: 10px;">닫기</button>
+            <button class="button-login" onclick="loginUser()">로그인</button>
         </div>
     </div>
+</div>
 
-    <footer class="footer-center">
-        <p style="color: black;">&copy; 2024 Nalhaha.com / feat. hwan-bang <a href="#terms" style="color: black;">이용약관</a></p>
-    </footer>
-</body>
-</html>
 
 
