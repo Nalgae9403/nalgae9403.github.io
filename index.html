@@ -1,22 +1,57 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang=ko>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://github.com/Nalgae9403/nalgae9403.github.io/blob/main/FAVICON2.png?raw=true">
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type=image/png sizes=32x32 href="https://github.com/Nalgae9403/nalgae9403.github.io/blob/main/FAVICON2.png?raw=true">
     <title>날하하</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel=stylesheet href=styles.css>
     <script>
         function redirectToSignup() {
-            window.location.href = 'signin.html'; // 회원가입 페이지 경로
+            document.getElementById('signup-modal').style.display = 'block';
         }
 
         function redirectToLogin() {
-            window.location.href = 'login.html'; // 로그인 페이지 경로
+            document.getElementById('login-modal').style.display = 'block';
+        }
+
+        function closeSignup() {
+            document.getElementById('signup-modal').style.display = 'none';
+        }
+
+        function closeLogin() {
+            document.getElementById('login-modal').style.display = 'none';
+        }
+
+        function checkDuplicate(field) {
+            const inputField = document.getElementById(field);
+            const duplicateMessage = document.getElementById(field + '-duplicate');
+            const existingValues = ["existingUser", "existingEmail@example.com"];
+
+            if (existingValues.includes(inputField.value)) {
+                duplicateMessage.style.color = 'red';
+                duplicateMessage.textContent = "이미 사용 중인 " + (field === 'nickname' ? "닉네임" : "이메일") + "입니다.";
+            } else {
+                duplicateMessage.style.color = 'green';
+                duplicateMessage.textContent = "사용 가능한 " + (field === 'nickname' ? "닉네임" : "이메일") + "입니다.";
+            }
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm-password');
+            const passwordMessage = document.getElementById('password-message');
+
+            if (password.value === confirmPassword.value) {
+                passwordMessage.style.color = 'green';
+                passwordMessage.textContent = "비밀번호가 일치합니다.";
+            } else {
+                passwordMessage.style.color = 'red';
+                passwordMessage.textContent = "비밀번호가 일치하지 않습니다.";
+            }
         }
     </script>
     <style>
-        /* 여기에 스타일 정의 */
         .button-signup {
             background-color: #561689;
             color: white;
@@ -33,6 +68,16 @@
             border-radius: 5px;
             border: 1px solid #561689;
             padding: 10px;
+            cursor: pointer;
+        }
+
+        .button-close {
+            background-color: #f44336; /* 빨간색 */
+            color: white;
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            margin-right: 10px;
             cursor: pointer;
         }
 
@@ -140,6 +185,37 @@
         .logo-and-title img {
             margin-right: 10px;
         }
+
+        /* 팝업 스타일 */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 0; /* 여백 줄이기 */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 400px; 
+            border-radius: 5px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: flex-start; /* 왼쪽 정렬 */
+            align-items: center;
+        }
     </style>
 </head>
 <body style="background-color: white; color: black;">
@@ -170,7 +246,7 @@
                 <li>
                     <button class="button-signup" onclick="redirectToSignup()">회원가입</button>
                 </li>
-                <li>
+                <li style="margin-right: 10px;">
                     <button class="button-login" onclick="redirectToLogin()">로그인</button>
                 </li>
             </ul>
@@ -189,9 +265,54 @@
         </section>
         <section id="wingswiki" class="content-divider" style="width: 48%;">
             <h2 style="color: black;">・날개위키의 최신 글</h2>
-            <!-- 최신 글 목록 -->
+            <!-- 날개위키의 최신 글 목록 -->
         </section>
     </main>
+
+    <!-- 회원가입 팝업 -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0;">회원가입</h2>
+            </div>
+            <form onsubmit="return false;"> <!-- 기본 제출 방지 -->
+                <label for="nickname">닉네임</label><br>
+                <input type="text" id="nickname" name="nickname" required onblur="checkDuplicate('nickname')"><br>
+                <span id="nickname-duplicate"></span><br>
+
+                <label for="email">이메일</label><br>
+                <input type="email" id="email" name="email" required onblur="checkDuplicate('email')"><br>
+                <span id="email-duplicate"></span><br>
+
+                <label for="password">비밀번호</label><br>
+                <input type="password" id="password" name="password" required><br>
+
+                <label for="confirm-password">비밀번호 확인</label><br>
+                <input type="password" id="confirm-password" name="confirm-password" required oninput="checkPasswordMatch()"><br>
+                <span id="password-message"></span><br><br>
+
+                <button type="button" class="button-close" onclick="closeSignup()">닫기</button>
+                <button type="submit" class="button-signup">회원가입</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 로그인 팝업 -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0;">로그인</h2>
+            </div>
+            <form>
+                <label for="login-email">이메일</label><br>
+                <input type="email" id="login-email" name="login-email" required><br>
+                <label for="login-password">비밀번호</label><br>
+                <input type="password" id="login-password" name="login-password" required><br><br>
+                <button type="button" class="button-close" onclick="closeLogin()">닫기</button>
+                <button type="submit" class="button-login">로그인</button>
+            </form>
+        </div>
+    </div>
 
     <footer class="footer-center">
         <p style="color: black;">&copy; 2024 Nalhaha.com / feat. hwan-bang <a href="#terms" style="color: black;">이용약관</a></p>
