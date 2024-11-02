@@ -289,6 +289,65 @@
                 </li>
                 <li style="margin-right: 10px;"><a href="#wingswiki" style="color: black;">날개위키</a></li>
                 <li style="margin-right: 10px;"><a href="#chat" style="color: black;">채팅</a></li>
+                <script>
+        function openChat() {
+            // 채팅방 HTML 내용을 별도 파일로 저장하고 해당 파일을 엽니다.
+            window.open('<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅방</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; margin-bottom: 10px; padding: 10px; }
+        input[type="text"] { width: 70%; }
+        input[type="button"] { width: 25%; }
+        .message { display: flex; justify-content: space-between; }
+        .delete-btn { cursor: pointer; color: red; }
+    </style>
+</head>
+<body>
+    <h1>채팅방</h1>
+    <div id="messages"></div>
+    <input type="text" id="username" placeholder="이름을 입력하세요">
+    <input type="text" id="message" placeholder="메시지를 입력하세요">
+    <input type="button" value="전송" onclick="sendMessage()">
+
+    <script>
+        function sendMessage() {
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('message').value;
+            if (username && message) {
+                const messagesDiv = document.getElementById('messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = `<strong>${username}:</strong> ${message} <span class="delete-btn" onclick="deleteMessage(this)">삭제</span>`;
+                messagesDiv.appendChild(messageDiv);
+                document.getElementById('message').value = ''; // 입력 필드 비우기
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; // 스크롤을 가장 아래로 이동
+            } else {
+                alert('이름과 메시지를 입력하세요.');
+            }
+        }
+
+        function deleteMessage(element) {
+            const username = document.getElementById('username').value; // 현재 사용자 이름 가져오기
+            const messageDiv = element.parentElement;
+            const sender = messageDiv.querySelector('strong').textContent.replace(':', ''); // 발신자 이름 가져오기
+            if (sender === username) {
+                messageDiv.remove(); // 해당 메시지 삭제
+            } else {
+                alert('이 메시지를 삭제할 권한이 없습니다.');
+            }
+        }
+    </script>
+</body>
+</html>', '_self');
+        }
+    </script>
+</body>
+</html>
                 <li style="margin-right: 10px;"><a href="#admin" style="color: black;">관리실</a></li>
                 <li class="divider"></li>
                 <li>
