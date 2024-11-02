@@ -6,77 +6,99 @@
     <link rel="icon" type=image/png sizes=32x32 href="https://github.com/Nalgae9403/nalgae9403.github.io/blob/main/FAVICON2.png?raw=true">
     <title>날하하</title>
     <link rel=stylesheet href=styles.css>
-    <script>
-        let users = {}; // 사용자를 저장할 객체
+   <script>
+    let users = {}; // 사용자를 저장할 객체
+    let loggedInUser = null; // 현재 로그인한 사용자
 
-function registerUser() {
-    const nickname = document.getElementById('nickname').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    function registerUser() {
+        const nickname = document.getElementById('nickname').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-    // 사용자 정보를 users 객체에 저장
-    users[email] = { nickname: nickname, password: password };
-    alert("회원가입이 완료되었습니다!");
-    closeSignup(); // 회원가입 모달 닫기
-}
-
-function loginUser() {
-    const loginEmail = document.getElementById('login-email').value;
-    const loginPassword = document.getElementById('login-password').value;
-
-    // 사용자가 등록되어 있는지 확인
-    if (users[loginEmail] && users[loginEmail].password === loginPassword) {
-        alert("로그인 성공! 반갑습니다, " + users[loginEmail].nickname + "님!");
-        closeLogin(); // 로그인 모달 닫기
-        // 여기서 추가적인 로그인 후 행동을 추가할 수 있습니다.
-    } else {
-        alert("로그인 실패: 이메일이나 비밀번호가 잘못되었습니다.");
+        // 사용자 정보를 users 객체에 저장
+        users[email] = { nickname: nickname, password: password };
+        alert("회원가입이 완료되었습니다!");
+        closeSignup(); // 회원가입 모달 닫기
     }
-}
-        function redirectToSignup() {
-            document.getElementById('signup-modal').style.display = 'block';
+
+    function loginUser() {
+        const loginEmail = document.getElementById('login-email').value;
+        const loginPassword = document.getElementById('login-password').value;
+
+        // 사용자가 등록되어 있는지 확인
+        if (users[loginEmail] && users[loginEmail].password === loginPassword) {
+            alert("로그인 성공! 반갑습니다, " + users[loginEmail].nickname + "님!");
+            loggedInUser = users[loginEmail]; // 현재 로그인한 사용자 저장
+            closeLogin(); // 로그인 모달 닫기
+            updateUIAfterLogin(); // UI 업데이트
+        } else {
+            alert("로그인 실패: 이메일이나 비밀번호가 잘못되었습니다.");
         }
+    }
 
-        function redirectToLogin() {
-            document.getElementById('login-modal').style.display = 'block';
+    function updateUIAfterLogin() {
+        // 로그인 후 UI 업데이트 (예: 로그인 버튼 숨기고 닉네임 표시)
+        document.getElementById('user-info').textContent = loggedInUser.nickname + "님, 환영합니다!";
+        document.getElementById('signup-button').style.display = 'none'; // 가입 버튼 숨기기
+        document.getElementById('login-button').style.display = 'none'; // 로그인 버튼 숨기기
+        document.getElementById('logout-button').style.display = 'block'; // 로그아웃 버튼 표시
+    }
+
+    function logoutUser() {
+        loggedInUser = null; // 로그아웃
+        document.getElementById('user-info').textContent = '';
+        document.getElementById('signup-button').style.display = 'block'; // 가입 버튼 표시
+        document.getElementById('login-button').style.display = 'block'; // 로그인 버튼 표시
+        document.getElementById('logout-button').style.display = 'none'; // 로그아웃 버튼 숨기기
+    }
+
+    function redirectToSignup() {
+        document.getElementById('signup-modal').style.display = 'block';
+    }
+
+    function redirectToLogin() {
+        document.getElementById('login-modal').style.display = 'block';
+    }
+
+    function closeSignup() {
+        document.getElementById('signup-modal').style.display = 'none';
+    }
+
+    function closeLogin() {
+        document.getElementById('login-modal').style.display = 'none';
+    }
+
+    function checkDuplicate(field) {
+        const inputField = document.getElementById(field);
+        const duplicateMessage = document.getElementById(field + '-duplicate');
+        const existingValues = Object.keys(users); // 기존 사용자 이메일 확인
+
+        if (field === 'nickname' && Object.values(users).some(user => user.nickname === inputField.value)) {
+            duplicateMessage.style.color = 'red';
+            duplicateMessage.textContent = "이미 사용 중인 닉네임입니다.";
+        } else if (field === 'email' && existingValues.includes(inputField.value)) {
+            duplicateMessage.style.color = 'red';
+            duplicateMessage.textContent = "이미 사용 중인 이메일입니다.";
+        } else {
+            duplicateMessage.style.color = 'green';
+            duplicateMessage.textContent = "사용 가능한 " + (field === 'nickname' ? "닉네임" : "이메일") + "입니다.";
         }
+    }
 
-        function closeSignup() {
-            document.getElementById('signup-modal').style.display = 'none';
+    function checkPasswordMatch() {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm-password');
+        const passwordMessage = document.getElementById('password-message');
+
+        if (password.value === confirmPassword.value) {
+            passwordMessage.style.color = 'green';
+            passwordMessage.textContent = "비밀번호가 일치합니다.";
+        } else {
+            passwordMessage.style.color = 'red';
+            passwordMessage.textContent = "비밀번호가 일치하지 않습니다.";
         }
-
-        function closeLogin() {
-            document.getElementById('login-modal').style.display = 'none';
-        }
-
-        function checkDuplicate(field) {
-            const inputField = document.getElementById(field);
-            const duplicateMessage = document.getElementById(field + '-duplicate');
-            const existingValues = ["existingUser", "existingEmail@example.com"];
-
-            if (existingValues.includes(inputField.value)) {
-                duplicateMessage.style.color = 'red';
-                duplicateMessage.textContent = "이미 사용 중인 " + (field === 'nickname' ? "닉네임" : "이메일") + "입니다.";
-            } else {
-                duplicateMessage.style.color = 'green';
-                duplicateMessage.textContent = "사용 가능한 " + (field === 'nickname' ? "닉네임" : "이메일") + "입니다.";
-            }
-        }
-
-        function checkPasswordMatch() {
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirm-password');
-            const passwordMessage = document.getElementById('password-message');
-
-            if (password.value === confirmPassword.value) {
-                passwordMessage.style.color = 'green';
-                passwordMessage.textContent = "비밀번호가 일치합니다.";
-            } else {
-                passwordMessage.style.color = 'red';
-                passwordMessage.textContent = "비밀번호가 일치하지 않습니다.";
-            }
-        }
-    </script>
+    }
+</script>
     <style>
         .button-signup {
             background-color: #561689;
